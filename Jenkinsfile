@@ -36,6 +36,29 @@ pipeline {
             }
         }
 
+        stage('SonarCloud Analysis') {
+            steps {
+                echo 'Running SonarCloud code quality and security analysis'
+
+                dir('nodejs-goof') {
+                    withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
+                        bat '''
+                        if not exist sonar-scanner-cli.zip curl.exe -L -o sonar-scanner-cli.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-8.1.0.6389-windows-x64.zip
+
+                        if not exist sonar-scanner-8.1.0.6389-windows-x64 powershell -Command "Expand-Archive -Path sonar-scanner-cli.zip -DestinationPath . -Force"
+
+                        sonar-scanner-8.1.0.6389-windows-x64\\bin\\sonar-scanner.bat ^
+                          -Dsonar.projectKey=AzadNoorzai_SIT223-7.1C-Jenkins ^
+                          -Dsonar.organization=azadnoorzai ^
+                          -Dsonar.host.url=https://sonarcloud.io ^
+                          -Dsonar.token=%SONAR_TOKEN% ^
+                          -Dsonar.sources=.
+                        '''
+                    }
+                }
+            }
+        }
+
         stage('Deploy to Staging') {
             steps {
                 echo 'Deploy to staging server'
