@@ -22,7 +22,8 @@ pipeline {
 
         stage('Security Scan') {
             steps {
-                echo 'Run Snyk'
+                echo 'Running npm dependency security audit'
+                bat '"C:\\Program Files\\nodejs\\npm.cmd" audit || exit /b 0'
             }
         }
 
