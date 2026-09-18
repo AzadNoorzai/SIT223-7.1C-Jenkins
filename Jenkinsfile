@@ -22,8 +22,16 @@ pipeline {
 
         stage('Security Scan') {
             steps {
-                echo 'Running npm dependency security audit'
-                bat '"C:\\Program Files\\nodejs\\npm.cmd" audit || exit /b 0'
+                echo 'Cloning OWASP NodeGoat for dependency security testing'
+
+                dir('NodeGoat') {
+                    git branch: 'master',
+                        url: 'https://github.com/OWASP/NodeGoat.git'
+
+                    echo 'Running npm dependency security audit'
+
+                    bat '"C:\\Program Files\\nodejs\\npm.cmd" audit || exit /b 0'
+                }
             }
         }
 
